@@ -24,3 +24,21 @@ make runrm
 
 A manifest has been provided in the `k8s` directory as a starting point for
 deployment on Kubernetes.
+
+Verify connectivity to the Kubernetes cluster with the `kubectl` utility.
+
+```
+kubectl cluster-info
+```
+
+Apply the manifest for the application.
+
+```
+kubectl apply -f k8s/whoosis.yaml
+```
+
+The application should deployed after a few minutes.
+
+```
+kubectl describe svc whoosis
+```
