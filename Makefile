@@ -78,7 +78,7 @@ init: | setup migrate
 #
 .PHONY: tag
 tag:
-	git tag v$(APP_VERSION)
+	git tag v$(APP_VERSION) -m"Tagging v$(APP_VERSION) release"
 	git push --tags
 
 #
