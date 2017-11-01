@@ -1,6 +1,7 @@
 APP_NAME=whoosis
 BASE_DIR=$(shell pwd)
 SRC_DIR=$(BASE_DIR)/src
+DIST_DIR=$(SRC_DIR)/dist
 DEV_IMAGE=python:3
 DEV_NAME=$(APP_NAME)-dev
 DEV_DIR=/opt/$(APP_NAME)
@@ -9,6 +10,7 @@ DEV_PORT_CONTAINER=4778
 DEV_PORT_HOST=$(DEV_PORT_CONTAINER)
 DEV_PREVIEW_HOST=0.0.0.0:$(DEV_PORT_CONTAINER)
 DEV_SHELL=/bin/bash
+DEV_USER=jmckind
 RUN_NAME=$(APP_NAME)-run
 RUN_PORT_CONTAINER=4778
 RUN_PORT_HOST=8778
@@ -66,27 +68,12 @@ migrate:
 	docker exec -it $(DEV_NAME) python manage.py migrate
 
 #
-# The dist target will generate the distributable artifact for the application.
+# The tag target adds a git tag for the current version.
 #
-.PHONY: dist
-dist:
-	docker exec -it $(DEV_NAME) python setup.py sdist
-
-#
-# The build target builds a docker image for the application.
-#
-.PHONY: build
-build:
-	docker build --no-cache -t $(RELEASE_PROJECT)/$(APP_NAME):$(VERSION) .
-
-#
-# The release target pushes the application container image to dockerhub.
-#
-.PHONY: release
-release:
-	docker tag $(RELEASE_PROJECT)/$(APP_NAME):$(VERSION) $(RELEASE_PROJECT)/$(APP_NAME):latest
-	docker push $(RELEASE_PROJECT)/$(APP_NAME):$(VERSION)
-	docker push $(RELEASE_PROJECT)/$(APP_NAME):latest
+.PHONY: tag
+tag:
+	git tag v$(VERSION)
+	git push --tags
 
 #
 # The run target runs the docker image for the application.
