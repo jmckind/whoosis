@@ -1,0 +1,30 @@
+{% extends "web/base.html" %}
+
+{% block content %}
+<p id="whoosis-list">
+  <div class="container-fluid">
+    {% for object in object_list %}
+      <div id="{{ object.id }}" class="col-xs-6 col-sm-3 col-md-2">
+        <div class="well text-center">
+          <a href="{% url 'web.update' object.id %}">
+            <h5>
+              <p><i class="fa fa-cube fa-3x" aria-hidden="true"></i></p>
+              <p>{{ object.name|truncatechars:13 }}</p>
+            </h5>
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <div class="well text-center">
+        <a href="{% url 'web.new' %}">
+          <h5 class="text-primary">
+            <p><i class="fa fa-plus-circle fa-3x" aria-hidden="true"></i></p>
+            <p>New</p>
+          </h5>
+        </a>
+      </div>
+    </div>
+  </div>
+</p>
+{% endblock %}

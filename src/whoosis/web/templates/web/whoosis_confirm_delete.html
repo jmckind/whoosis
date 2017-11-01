@@ -1,0 +1,17 @@
+{% extends "web/base.html" %}
+
+{% block content %}
+<div class="container">
+  <h3>Confirm Delete</h3>
+  <form method="POST" class="well">
+    {% csrf_token %}
+
+    <legend>
+      <h5>Are you sure that you want to delete {{ whoosis.name}}?</h5>
+    </legend>
+
+    <a href="{% url 'web.update' whoosis.id %}" class="btn btn-default"><i class="fa fa-times" aria-hidden="true"></i> Cancel</a>
+    <button type="submit" class="btn btn-danger"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove Forever!</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "web/base.html" %}
+
+{% block title %}{{ block.super }} &mdash; {{ whoosis.name|default:'New' }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h3><i class="fa fa-cube" aria-hidden="true"></i> {{ whoosis.name|default:'New' }}</h3>
+  {% if whoosis.id %}
+    <p>
+      <span><small><strong>Created:</strong> {{ whoosis.date_created }}</small></span>
+      <span><small><strong>Modified:</strong> {{ whoosis.date_modified }}</small></span>
+    </p>
+  {% endif %}
+
+  <form method="POST" class="well">
+    {% csrf_token %}
+
+    {% if form.errors or form.non_field_errors %}
+      <div class="alert alert-warning" role="alert">
+        <p><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please correct the issues below and try again...</p>
+        <p>{{ form.non_field_errors }}</p>
+      </div>
+    {% endif %}
+
+    <div class="form-group{% if form.name.errors %} has-error{% endif %}">
+      <label for="txtName">{{ form.name.label }}</label>
+      <input type="text" class="form-control" id="txtName" name="name" value="{{ form.name.value|default:'' }}" placeholder="Name" >
+      <small class="help-block"><span class="text-danger">{{ form.name.errors }}</span></small>
+    </div>
+
+    <div class="form-group">
+      <a href="{% url 'web.list' %}" class="btn btn-default"><i class="fa fa-times" aria-hidden="true"></i> Cancel</a>
+      <button type="submit" class="btn btn-primary"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
+      {% if whoosis %}
+        <a href="{% url 'web.delete' whoosis.id %}" class="btn btn-danger pull-right"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</a>
+      {% endif %}
+    </div>
+  </form>
+
+</div>
+{% endblock %}

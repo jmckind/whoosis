@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoosis
+spec:
+  type: NodePort
+  selector:
+    app: whoosis
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 443
+    - name: whoosis
+      protocol: TCP
+      port: 4778
+      targetPort: 4778
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: whoosis
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: whoosis
+    spec:
+      volumes:
+        - name: whoosis-data
+          emptyDir: {}
+      containers:
+        - name: whoosis-app
+          image: jmckind/whoosis:0.0.4
+          ports:
+            - containerPort: 4778
+          volumeMounts:
+            - mountPath: /opt/whoosis
+              name: whoosis-data
+        - name: whoosis-proxy
+          image: nginx:1.13-alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /opt/whoosis
+              name: whoosis-data
+      initContainers:
+        - name: whoosis-migrate
+          image: jmckind/whoosis:0.0.4
+          command:
+            - django-admin
+            - migrate
+          env:
+            - name: DJANGO_SETTINGS_MODULE
+              value: whoosis.settings
+          volumeMounts:
+            - mountPath: /opt/whoosis
+              name: whoosis-data
+        - name: whoosis-static
+          image: jmckind/whoosis:0.0.4
+          command:
+            - django-admin
+            - collectstatic
+          env:
+            - name: DJANGO_SETTINGS_MODULE
+              value: whoosis.settings
+          volumeMounts:
+            - mountPath: /opt/whoosis
+              name: whoosis-data
