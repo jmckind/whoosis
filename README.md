@@ -12,5 +12,5 @@ For more information, see the following documentation.
 
 From [dictionary.com](http://www.dictionary.com/browse/whoosis).
 
-  0. An object or person whose name is not known or cannot be recalled.
-  0. A person or thing considered typical or illustrative.
+  1. An object or person whose name is not known or cannot be recalled.
+  1. A person or thing considered typical or illustrative.
