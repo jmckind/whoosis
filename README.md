@@ -1,8 +1,8 @@
-### Overview
+# Overview
 
 Whoosis is a simple Django web application for demonstration purposes.
 
-### Documentation
+# Documentation
 
 For more information, see the following sections.
 
@@ -10,7 +10,7 @@ For more information, see the following sections.
   * [Release](doc/release.md)
   * [Deployment](doc/deployment.md)
 
-### Whoosis..?
+# Whoosis..?
 
 From [dictionary.com](http://www.dictionary.com/browse/whoosis).
 
