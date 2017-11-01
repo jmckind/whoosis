@@ -2,26 +2,11 @@
 
 Whoosis is a simple Django web application for demonstration purposes.
 
-### Development
+For more information, see the following documentation.
 
-Start a container locally to run the application in development mode.
-
-```
-docker run --rm -it -v $(pwd):/opt/whoosis -p 8000:8000 -w /opt/whoosis python:3 /bin/bash
-```
-
-Once the container is running, start the development server.
-
-```
-python manage.py runserver 0.0.0.0:8000
-```
-
-### Commands
-
-```
-DJANGO_SETTINGS_MODULE=whoosis.settings django-admin migrate
-DJANGO_SETTINGS_MODULE=whoosis.settings django-admin collectstatic
-```
+  * [Development](doc/development.md)
+  * [Release](doc/release.md)
+  * [Deployment](doc/deployment.md)
 
 ### Whoosis..?
 
@@ -29,27 +14,3 @@ From [dictionary.com](http://www.dictionary.com/browse/whoosis).
 
   0. An object or person whose name is not known or cannot be recalled.
   0. A person or thing considered typical or illustrative.
-
-## License
-
-MIT License
-
-Copyright (c) 2017 John McKenzie
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
