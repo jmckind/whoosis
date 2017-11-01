@@ -1,4 +1,5 @@
 APP_NAME=whoosis
+APP_VERSION=$(shell cat $(SRC_DIR)/setup.py | grep -o 'version=.*' | cut -d"'" -f2)
 BASE_DIR=$(shell pwd)
 SRC_DIR=$(BASE_DIR)/src
 DIST_DIR=$(SRC_DIR)/dist
@@ -10,12 +11,11 @@ DEV_PORT_CONTAINER=4778
 DEV_PORT_HOST=$(DEV_PORT_CONTAINER)
 DEV_PREVIEW_HOST=0.0.0.0:$(DEV_PORT_CONTAINER)
 DEV_SHELL=/bin/bash
-DEV_USER=jmckind
-RUN_NAME=$(APP_NAME)-run
-RUN_PORT_CONTAINER=4778
-RUN_PORT_HOST=8778
 RELEASE_PROJECT=jmckind
-VERSION=$(shell cat $(SRC_DIR)/setup.py | grep -o 'version=.*' | cut -d"'" -f2)
+RELEASE_IMAGE=$(RELEASE_PROJECT)/$(APP_NAME):$(APP_VERSION)
+RUN_NAME=$(APP_NAME)-run
+RUN_PORT_CONTAINER=$(DEV_PORT_CONTAINER)
+RUN_PORT_HOST=8778
 
 #
 # The setup target creates a container locally to run the application in
@@ -68,11 +68,17 @@ migrate:
 	docker exec -it $(DEV_NAME) python manage.py migrate
 
 #
+# The init target will run the setup and migrate targets in order
+#
+.PHONY: init
+init: | setup migrate
+
+#
 # The tag target adds a git tag for the current version.
 #
 .PHONY: tag
 tag:
-	git tag v$(VERSION)
+	git tag v$(APP_VERSION)
 	git push --tags
 
 #
@@ -82,7 +88,7 @@ tag:
 run:
 	docker run --name $(RUN_NAME) -itd \
 		-p $(RUN_PORT_HOST):$(RUN_PORT_CONTAINER) \
-		$(RELEASE_PROJECT)/$(APP_NAME):$(VERSION)
+		$(RELEASE_IMAGE)
 
 #
 # The runrm target removes the running container for the application.
@@ -96,7 +102,7 @@ runrm:
 # development.
 #
 .PHONY: clean
-clean: devrm runrm
+clean: | devrm runrm
 	cd $(SRC_DIR) && rm -fr build dist *.egg-info
 	find . -name __pycache__ -exec rm -fr {} \; 2> /dev/null || true
 
