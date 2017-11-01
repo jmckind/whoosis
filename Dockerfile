@@ -1,4 +1,4 @@
-FROM python:3-alpine
+FROM python:3
 
 COPY etc/gunicorn.conf /etc/whoosis/
 COPY src /opt/whoosis/src
