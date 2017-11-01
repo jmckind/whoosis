@@ -1,8 +1,11 @@
-FROM python:3
+FROM python:3-alpine
 
+COPY etc/gunicorn.conf /etc/whoosis/
 COPY src /opt/whoosis/src
+WORKDIR /opt/whoosis/src
+
 RUN pip install -e /opt/whoosis/src
 
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["gunicorn", "-b", "0.0.0.0:4778", "whoosis.wsgi"]
+CMD ["gunicorn", "--config", "/etc/whoosis/gunicorn.conf"]
 EXPOSE 4778
