@@ -1,7 +1,7 @@
 FROM python:3
 
-COPY src/dist/*.gz /tmp/
-RUN pip install /tmp/whoosis-*.tar.gz
+COPY src /opt/whoosis/src
+RUN pip install -e /opt/whoosis/src
 
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["gunicorn", "-b", "0.0.0.0:4778", "whoosis.wsgi"]
