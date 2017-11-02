@@ -5,8 +5,6 @@ LABEL maintainer="jmckind@gmail.com"
 COPY etc/gunicorn.conf /etc/whoosis/
 COPY src /opt/whoosis/src
 
-WORKDIR /opt/whoosis/src
-
 RUN pip install -e /opt/whoosis/src
 
 ENTRYPOINT ["dumb-init", "--"]
