@@ -36,7 +36,7 @@ spec:
           emptyDir: {}
       containers:
         - name: whoosis-app
-          image: jmckind/whoosis:0.0.7-rc4
+          image: jmckind/whoosis:0.0.10
           ports:
             - containerPort: 4778
           volumeMounts:
@@ -51,7 +51,7 @@ spec:
               name: whoosis-data
       initContainers:
         - name: whoosis-migrate
-          image: jmckind/whoosis:0.0.7-rc4
+          image: jmckind/whoosis:0.0.10
           command:
             - django-admin
             - migrate
@@ -62,7 +62,7 @@ spec:
             - mountPath: /opt/whoosis
               name: whoosis-data
         - name: whoosis-static
-          image: jmckind/whoosis:0.0.7-rc4
+          image: jmckind/whoosis:0.0.10
           command:
             - django-admin
             - collectstatic
