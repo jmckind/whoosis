@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: whoosis-db
+data:
+  root: c2VjcmV0
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoosis-db
+  labels:
+    app: whoosis
+    tier: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: whoosis
+    tier: backend
+    role: datastore
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3306
+      targetPort: 3306
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: whoosis-db
+  labels:
+    app: whoosis
+    tier: backend
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: whoosis
+        tier: backend
+        role: datastore
+    spec:
+      containers:
+        - name: whoosis-db
+          image: mariadb:10
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: whoosis-db
+                  key: root
