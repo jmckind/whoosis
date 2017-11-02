@@ -13,6 +13,7 @@ DEV_PREVIEW_HOST=0.0.0.0:$(DEV_PORT_CONTAINER)
 DEV_SHELL=/bin/bash
 RELEASE_PROJECT=jmckind
 RELEASE_IMAGE=$(RELEASE_PROJECT)/$(APP_NAME):$(APP_VERSION)
+RELEASE_SRC_ARCHIVE=$(APP_NAME)-$(APP_VERSION).tar.gz
 RUN_NAME=$(APP_NAME)-run
 RUN_PORT_CONTAINER=$(DEV_PORT_CONTAINER)
 RUN_PORT_HOST=8778
@@ -74,12 +75,33 @@ migrate:
 init: | setup migrate
 
 #
+# The dist target will generate the distributable artifact for the application.
+# The tag target adds a git tag for the current version.
+#
+.PHONY: dist
+dist:
+	docker exec -it $(DEV_NAME) python setup.py sdist
+
+#
 # The tag target adds a git tag for the current version.
 #
 .PHONY: tag
 tag:
 	git tag v$(APP_VERSION) -m"Tagging v$(APP_VERSION) release"
 	git push --tags
+
+#
+# The release target uploads the release binary to the github release for the
+# current version.
+#
+.PHONY: release
+release: clean init dist
+	github-release upload \
+		--user $(RELEASE_PROJECT) \
+		--repo $(APP_NAME) \
+		--tag v$(APP_VERSION) \
+		--name "$(RELEASE_SRC_ARCHIVE)" \
+		--file $(DIST_DIR)/$(RELEASE_SRC_ARCHIVE)
 
 #
 # The run target runs the docker image for the application.
