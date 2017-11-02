@@ -1,4 +1,22 @@
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: whoosis-proxy
+  labels:
+    app: whoosis
+data:
+  default.conf: |
+    server {
+        listen      80;
+        server_name  _;
+
+        location = /favicon.ico { access_log off; log_not_found off; }
+        location /static/ { root /opt/whoosis; }
+
+        location / { proxy_pass http://localhost:4778; }
+    }
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: whoosis
@@ -11,14 +29,6 @@ spec:
       protocol: TCP
       port: 80
       targetPort: 80
-    - name: https
-      protocol: TCP
-      port: 443
-      targetPort: 443
-    - name: whoosis
-      protocol: TCP
-      port: 4778
-      targetPort: 4778
 ---
 apiVersion: apps/v1beta1
 kind: Deployment
@@ -34,9 +44,12 @@ spec:
       volumes:
         - name: whoosis-data
           emptyDir: {}
+        - name: proxy-config
+          configMap:
+            name: whoosis-proxy
       containers:
         - name: whoosis-app
-          image: jmckind/whoosis:0.0.15
+          image: jmckind/whoosis:0.1.0
           ports:
             - containerPort: 4778
           volumeMounts:
@@ -49,9 +62,11 @@ spec:
           volumeMounts:
             - mountPath: /opt/whoosis
               name: whoosis-data
+            - mountPath: /etc/nginx/conf.d
+              name: proxy-config
       initContainers:
         - name: whoosis-migrate
-          image: jmckind/whoosis:0.0.15
+          image: jmckind/whoosis:0.1.0
           command:
             - django-admin
             - migrate
@@ -62,7 +77,7 @@ spec:
             - mountPath: /opt/whoosis
               name: whoosis-data
         - name: whoosis-static
-          image: jmckind/whoosis:0.0.15
+          image: jmckind/whoosis:0.1.0
           command:
             - django-admin
             - collectstatic
