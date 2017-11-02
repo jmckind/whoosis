@@ -96,6 +96,14 @@ tag:
 #
 .PHONY: release
 release: clean init dist
+	github-release release \
+		--user $(RELEASE_PROJECT) \
+		--repo $(APP_NAME) \
+		--tag "v$(APP_VERSION)" \
+		--name "v$(APP_VERSION) Release" \
+		--description "Release for Whoosis v$(APP_VERSION)."
+		--file $(DIST_DIR)/$(RELEASE_SRC_ARCHIVE)
+
 	github-release upload \
 		--user $(RELEASE_PROJECT) \
 		--repo $(APP_NAME) \
