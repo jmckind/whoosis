@@ -6,7 +6,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='whoosis',
-    version='0.1.1a1',
+    version='0.1.1a2',
     packages=find_packages(),
     include_package_data=True,
     license='MIT License',
@@ -35,6 +35,7 @@ setup(
         'Django==1.11.6',
         'dumb-init==1.2.0',
         'gunicorn==19.7.1',
+        'mysqlclient==1.3.12',
         'pytz==2017.3'
     ],
     extras_require={
