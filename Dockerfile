@@ -8,5 +8,5 @@ RUN wget -O /tmp/whoosis.tar.gz $(wget -qO - https://api.github.com/repos/jmckin
 RUN pip install /tmp/whoosis.tar.gz
 
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["gunicorn", "--config", "/etc/whoosis/gunicorn.conf"]
+CMD ["gunicorn", "--config", "/etc/whoosis/gunicorn.conf", "whoosis.wsgi"]
 EXPOSE 4778
