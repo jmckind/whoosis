@@ -87,7 +87,7 @@ dist:
 #
 .PHONY: tag
 tag:
-	git tag v$(APP_VERSION) -m"Tagging v$(APP_VERSION) release"
+	git tag "v$(APP_VERSION)" -m"Tagging v$(APP_VERSION) release"
 	git push --tags
 
 #
@@ -99,7 +99,7 @@ release: clean init dist
 	github-release upload \
 		--user $(RELEASE_PROJECT) \
 		--repo $(APP_NAME) \
-		--tag v$(APP_VERSION) \
+		--tag "v$(APP_VERSION)" \
 		--name "$(RELEASE_SRC_ARCHIVE)" \
 		--file $(DIST_DIR)/$(RELEASE_SRC_ARCHIVE)
 
