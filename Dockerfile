@@ -1,6 +1,12 @@
-FROM python:3
+FROM python:3-alpine
 
 LABEL maintainer="jmckind@gmail.com"
+
+RUN apk add --no-cache \
+  gcc \
+  mariadb-dev \
+  musl-dev \
+  openssl
 
 COPY etc/gunicorn.conf /etc/whoosis/gunicorn.conf
 
