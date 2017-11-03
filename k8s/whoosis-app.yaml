@@ -52,7 +52,7 @@ data:
 apiVersion: v1
 kind: Service
 metadata:
-  name: whoosis
+  name: whoosis-app
   labels:
     app: whoosis
     tier: frontend
@@ -76,7 +76,7 @@ metadata:
     app: whoosis
     tier: frontend
 spec:
-  replicas: 1
+  replicas: 3
   template:
     metadata:
       labels:
@@ -95,7 +95,7 @@ spec:
             name: whoosis-proxy
       containers:
         - name: whoosis-app
-          image: quay.io/john_mckenzie/whoosis:v0.1.1a3
+          image: quay.io/john_mckenzie/whoosis:v0.1.1
           ports:
             - containerPort: 4778
           volumeMounts:
@@ -114,7 +114,7 @@ spec:
               name: proxy-config
       initContainers:
         - name: whoosis-migrate
-          image: quay.io/john_mckenzie/whoosis:v0.1.1a3
+          image: quay.io/john_mckenzie/whoosis:v0.1.1
           command:
             - django-admin
             - migrate
@@ -129,7 +129,7 @@ spec:
             - mountPath: /etc/whoosis
               name: app-config
         - name: whoosis-static
-          image: quay.io/john_mckenzie/whoosis:v0.1.1a3
+          image: quay.io/john_mckenzie/whoosis:v0.1.1
           command:
             - django-admin
             - collectstatic
