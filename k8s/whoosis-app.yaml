@@ -95,7 +95,7 @@ spec:
             name: whoosis-proxy
       containers:
         - name: whoosis-app
-          image: quay.io/john_mckenzie/whoosis:v0.1.1a1
+          image: quay.io/john_mckenzie/whoosis:v0.1.1a3
           ports:
             - containerPort: 4778
           volumeMounts:
@@ -114,24 +114,32 @@ spec:
               name: proxy-config
       initContainers:
         - name: whoosis-migrate
-          image: quay.io/john_mckenzie/whoosis:v0.1.1a1
+          image: quay.io/john_mckenzie/whoosis:v0.1.1a3
           command:
             - django-admin
             - migrate
           env:
             - name: DJANGO_SETTINGS_MODULE
               value: whoosis.settings
+            - name: PYTHONPATH
+              value: '/etc/whoosis'
           volumeMounts:
             - mountPath: /opt/whoosis
               name: whoosis-data
+            - mountPath: /etc/whoosis
+              name: app-config
         - name: whoosis-static
-          image: quay.io/john_mckenzie/whoosis:v0.1.1a1
+          image: quay.io/john_mckenzie/whoosis:v0.1.1a3
           command:
             - django-admin
             - collectstatic
           env:
             - name: DJANGO_SETTINGS_MODULE
               value: whoosis.settings
+            - name: PYTHONPATH
+              value: '/etc/whoosis'
           volumeMounts:
             - mountPath: /opt/whoosis
               name: whoosis-data
+            - mountPath: /etc/whoosis
+              name: app-config
