@@ -1,0 +1,14 @@
+name: whoosis-app
+version: 0.0.13
+appVersion: 0.1.1
+description: Whoosis is a simple Django web application for demonstration purposes.
+keywords:
+- demo
+- web
+home: https://whoosis.io/
+icon: https://whoosis.io/favicon.png
+sources:
+- https://github.com/jmckind/whoosis
+maintainers:
+- name: jmckind
+engine: gotpl

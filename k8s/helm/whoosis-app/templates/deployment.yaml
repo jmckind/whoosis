@@ -1,0 +1,120 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "whoosis.fullname" . }}
+  labels:
+    app: {{ template "whoosis.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  template:
+    metadata:
+      labels:
+        app: {{ template "whoosis.fullname" . }}
+    spec:
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      {{- end }}
+      volumes:
+        - name: whoosis-data
+          emptyDir: {}
+        - name: app-config
+          configMap:
+            name: "{{ template "whoosis.fullname" . }}-app"
+        - name: proxy-config
+          configMap:
+            name: "{{ template "whoosis.fullname" . }}-proxy"
+      containers:
+        - name: {{ template "whoosis.fullname" . }}
+          image: "{{ .Values.image }}:{{ .Values.imageTag }}"
+          imagePullPolicy: {{ default "" .Values.imagePullPolicy | quote }}
+          ports:
+            - name: whoosis
+              containerPort: {{ .Values.port }}
+          # livenessProbe:
+          #   exec:
+          #     command:
+          #       - sh
+          #       - -c
+          #       - exec isready --host $POD_IP
+          #   initialDelaySeconds: 60
+          #   timeoutSeconds: 5
+          #   failureThreshold: 6
+          # readinessProbe:
+          #   exec:
+          #     command:
+          #       - sh
+          #       - -c
+          #       - exec isready --host $POD_IP
+          #   initialDelaySeconds: 5
+          #   timeoutSeconds: 3
+          #   periodSeconds: 5
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          volumeMounts:
+            - mountPath: /opt/whoosis
+              name: whoosis-data
+            - mountPath: /etc/whoosis
+              name: app-config
+        - name: proxy
+          image: "{{ .Values.proxy.image }}:{{ .Values.proxy.imageTag }}"
+          imagePullPolicy: {{ default "" .Values.proxy.imagePullPolicy | quote }}
+          ports:
+            - name: proxy
+              containerPort: {{ .Values.proxy.port }}
+          resources:
+{{ toYaml .Values.proxy.resources | indent 12 }}
+          volumeMounts:
+            - mountPath: /opt/whoosis
+              name: whoosis-data
+            - mountPath: /etc/nginx/conf.d
+              name: proxy-config
+{{- if .Values.metrics.enabled }}
+        - name: metrics
+          image: "{{ .Values.metrics.image }}:{{ .Values.metrics.imageTag }}"
+          imagePullPolicy: {{ default "" .Values.metrics.imagePullPolicy | quote }}
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.metrics.port }}
+          resources:
+{{ toYaml .Values.metrics.resources | indent 12 }}
+{{- end }}
+      initContainers:
+        - name: migrate
+          image: "{{ .Values.image }}:{{ .Values.imageTag }}"
+          imagePullPolicy: {{ default "" .Values.imagePullPolicy | quote }}
+          command:
+            - django-admin
+            - migrate
+          env:
+            - name: DJANGO_SETTINGS_MODULE
+              value: whoosis.settings
+            - name: PYTHONPATH
+              value: '/etc/whoosis'
+          volumeMounts:
+            - mountPath: /opt/whoosis
+              name: whoosis-data
+            - mountPath: /etc/whoosis
+              name: app-config
+        - name: collectstatic
+          image: "{{ .Values.image }}:{{ .Values.imageTag }}"
+          imagePullPolicy: {{ default "" .Values.imagePullPolicy | quote }}
+          command:
+            - django-admin
+            - collectstatic
+          env:
+            - name: DJANGO_SETTINGS_MODULE
+              value: whoosis.settings
+            - name: PYTHONPATH
+              value: '/etc/whoosis'
+          volumeMounts:
+            - mountPath: /opt/whoosis
+              name: whoosis-data
+            - mountPath: /etc/whoosis
+              name: app-config

@@ -1,0 +1,68 @@
+## whoosis image repository
+image: "quay.io/john_mckenzie/whoosis"
+## whoosis image version
+## ref: https://hub.docker.com/r/jmckind/whoosis/tags/
+##
+imageTag: "v0.1.2a1"
+
+## whoosis port
+port: 4778
+
+## Specify a imagePullPolicy
+## 'Always' if imageTag is 'latest', else set to 'IfNotPresent'
+## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+##
+# imagePullPolicy:
+
+## Database
+database: {}
+## Database name
+## Default: whoosis
+#  name:
+## Create a database user
+## Default: whoosis
+#  user:
+## Default: random 10 character string
+#  password:
+
+## Proxy
+proxy:
+  image: nginx
+  imageTag: 1.13-alpine
+  imagePullPolicy: IfNotPresent
+  port: 80
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+
+## Metrics
+metrics:
+  enabled: false
+  image: wrouesnel/postgres_exporter
+  imageTag: v0.1.1
+  imagePullPolicy: IfNotPresent
+  port: 9187
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+
+## Configure resource requests and limits
+## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+##
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 100m
+
+service:
+  type: NodePort
+  port: 4778
+  externalIPs: []
+
+## Node labels and tolerations for pod assignment
+## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#taints-and-tolerations-beta-feature
+nodeSelector: {}
+tolerations: []

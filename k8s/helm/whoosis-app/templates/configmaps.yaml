@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ template "whoosis.fullname" . }}-proxy"
+  labels:
+    app: {{ template "whoosis.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+data:
+  default.conf: |
+    server {
+        listen      {{ default "80" .Values.proxy.port }};
+        server_name  _;
+
+        location = /favicon.ico { access_log off; log_not_found off; }
+        location /static/ { root /opt/whoosis; }
+
+        location / { proxy_pass http://localhost:{{ default "4778" .Values.port }}; }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ template "whoosis.fullname" . }}-app"
+  labels:
+    app: {{ template "whoosis.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+data:
+  gunicorn.conf: |
+    import multiprocessing
+
+    accesslog = '-'
+    access_log_format = '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
+    bind = '0.0.0.0:4778'
+    chdir = '/opt/whoosis'
+    django_settings = 'whoosis.settings'
+    errorlog = '-'
+    proc_name = 'whoosis'
+    pythonpath = '/etc/whoosis'
+    #workers = multiprocessing.cpu_count() * 2 + 1
+    workers = 3
+  local_settings.py: |
+    DEBUG = False
+    DATABASES = {
+      'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': '{{ default "whoosis" .Values.database.name }}',
+        'USER': '{{ default "whoosis" .Values.database.user }}',
+        'PASSWORD': 'notwhoosis',
+        'HOST': 'whoosis-db',
+        'PORT': '3306',
+      }
+    }
