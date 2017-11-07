@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/sh
 
 export DJANGO_SETTINGS_MODULE=whoosis.settings
 django-admin shell -c "from whoosis.web.models import Whoosis; print(Whoosis.objects.count())"
