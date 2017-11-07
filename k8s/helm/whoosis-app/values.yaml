@@ -3,7 +3,7 @@ image: "quay.io/john_mckenzie/whoosis"
 ## whoosis image version
 ## ref: https://hub.docker.com/r/jmckind/whoosis/tags/
 ##
-imageTag: "v0.1.2a1"
+imageTag: "v0.1.2"
 
 ## whoosis port
 port: 4778
