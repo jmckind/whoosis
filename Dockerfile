@@ -24,5 +24,5 @@ ENV PYTHONPATH /etc/whoosis
 WORKDIR /opt/whoosis
 
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["whoosis"]
+CMD ["gunicorn", "--config", "/etc/whoosis/gunicorn.conf", "whoosis.wsgi"]
 EXPOSE 4778
