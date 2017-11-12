@@ -1,14 +1,14 @@
 Whoosis can be accessed via port 80 on the following DNS name from within your cluster:
-{{ template "whoosis.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+{{ .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local
 
 To get your application database user password run:
 
-    WHOOSIS_DB_PASSWORD=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ template "whoosis.fullname" . }} -o jsonpath="{.data.db-password}" | base64 --decode; echo)
+    WHOOSIS_DB_PASSWORD=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ .Release.Name }} -o jsonpath="{.data.db-password}" | base64 --decode; echo)
 
 To connect to your application directly from outside the K8s cluster:
    {{- if contains "NodePort" .Values.service.type }}
      WHOOSIS_HOST=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath='{.items[0].status.addresses[0].address}')
-     WHOOSIS_PORT=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ template "whoosis.fullname" . }} -o jsonpath='{.spec.ports[0].nodePort}')
+     WHOOSIS_PORT=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ .Release.Name }} -o jsonpath='{.spec.ports[0].nodePort}')
 
    {{- else if contains "ClusterIP" .Values.service.type }}
      PGHOST=127.0.0.1
