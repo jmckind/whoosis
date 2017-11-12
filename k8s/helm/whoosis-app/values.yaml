@@ -16,14 +16,24 @@ port: 4778
 
 ## Database
 database: {}
+## Database engine
+## Default: django.db.backends.mysql
+#  engine:
 ## Database name
 ## Default: whoosis
 #  name:
-## Create a database user
+## Database user
 ## Default: whoosis
 #  user:
+## Database password
 ## Default: random 10 character string
 #  password:
+## Database host
+## Default: mariadb
+#  host:
+## Database password
+## Default: 3306
+#  port:
 
 ## Proxy
 proxy:
