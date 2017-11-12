@@ -1,7 +1,7 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: {{ template "whoosis.fullname" . }}
+  name: "{{ .Release.Name }}"
   labels:
     app: {{ template "whoosis.fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
@@ -26,35 +26,29 @@ spec:
           emptyDir: {}
         - name: app-config
           configMap:
-            name: "{{ template "whoosis.fullname" . }}-app"
+            name: "{{ .Release.Name }}-app"
         - name: proxy-config
           configMap:
-            name: "{{ template "whoosis.fullname" . }}-proxy"
+            name: "{{ .Release.Name }}-proxy"
       containers:
-        - name: {{ template "whoosis.fullname" . }}
+        - name: app
           image: "{{ .Values.image }}:{{ .Values.imageTag }}"
           imagePullPolicy: {{ default "" .Values.imagePullPolicy | quote }}
           ports:
             - name: whoosis
               containerPort: {{ .Values.port }}
-          # livenessProbe:
-          #   exec:
-          #     command:
-          #       - sh
-          #       - -c
-          #       - exec isready --host $POD_IP
-          #   initialDelaySeconds: 60
-          #   timeoutSeconds: 5
-          #   failureThreshold: 6
-          # readinessProbe:
-          #   exec:
-          #     command:
-          #       - sh
-          #       - -c
-          #       - exec isready --host $POD_IP
-          #   initialDelaySeconds: 5
-          #   timeoutSeconds: 3
-          #   periodSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["/usr/local/bin/ready"]
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command: ["/usr/local/bin/ready"]
+            initialDelaySeconds: 5
+            timeoutSeconds: 3
+            periodSeconds: 5
           resources:
 {{ toYaml .Values.resources | indent 12 }}
           volumeMounts:
@@ -89,14 +83,7 @@ spec:
         - name: migrate
           image: "{{ .Values.image }}:{{ .Values.imageTag }}"
           imagePullPolicy: {{ default "" .Values.imagePullPolicy | quote }}
-          command:
-            - django-admin
-            - migrate
-          env:
-            - name: DJANGO_SETTINGS_MODULE
-              value: whoosis.settings
-            - name: PYTHONPATH
-              value: '/etc/whoosis'
+          command: ["/usr/local/bin/migrate"]
           volumeMounts:
             - mountPath: /opt/whoosis
               name: whoosis-data
@@ -105,14 +92,7 @@ spec:
         - name: collectstatic
           image: "{{ .Values.image }}:{{ .Values.imageTag }}"
           imagePullPolicy: {{ default "" .Values.imagePullPolicy | quote }}
-          command:
-            - django-admin
-            - collectstatic
-          env:
-            - name: DJANGO_SETTINGS_MODULE
-              value: whoosis.settings
-            - name: PYTHONPATH
-              value: '/etc/whoosis'
+          command: ["/usr/local/bin/collectstatic"]
           volumeMounts:
             - mountPath: /opt/whoosis
               name: whoosis-data
