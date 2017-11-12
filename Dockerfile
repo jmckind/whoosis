@@ -9,7 +9,8 @@ RUN apk add --no-cache \
   musl-dev \
   openssl \
   postgresql-client \
-  postgresql-dev
+  postgresql-dev \
+  sqlite
 
 RUN mkdir -p /opt/whoosis /etc/whoosis
 
